@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMNI // Digital Entity 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Montserrat:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --magenta: #ff00ff;
+            --bg: #020205;
+            --text: #ffffff;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- ДИНАМИЧЕСКИЙ ФОН --- */
+        #bg-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            background-size: cover; background-position: center;
+            filter: brightness(0.2) contrast(1.1);
+            transition: background-image 1s ease-in-out, transform 2s ease-out;
+            transform: scale(1.1);
+        }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at 50% 50%, transparent 0%, var(--bg) 85%);
+        }
+
+        /* --- НАВИГАЦИЯ --- */
+        header {
+            position: fixed; top: 0; width: 100%; padding: 30px 5%; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-family: 'Syncopate'; font-size: 20px; letter-spacing: 4px; color: var(--primary); }
+
+        nav { display: flex; gap: 10px; background: var(--glass); padding: 5px; border-radius: 50px; border: 1px solid var(--border); }
+
+        .nav-btn {
+            background: transparent; border: none; color: rgba(255,255,255,0.5);
+            padding: 10px 20px; border-radius: 40px; cursor: pointer;
+            font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+            transition: var(--transition);
+        }
+
+        .nav-btn.active { background: white; color: black; box-shadow: 0 0 20px white; }
+
+        /* --- КОНТЕНТ --- */
+        main { padding: 150px 5% 100px; max-width: 1200px; margin: 0 auto; }
+
+        .section { display: none; opacity: 0; transform: translateY(30px); transition: var(--transition); }
+        .section.active { display: block; opacity: 1; transform: translateY(0); }
+
+        /* ГЛАВНАЯ */
+        .hero h1 { font-family: 'Syncopate'; font-size: clamp(2.5rem, 8vw, 6rem); line-height: 0.9; margin-bottom: 30px; }
+        .hero p { font-size: 1.2rem; color: #94a3b8; max-width: 700px; margin-bottom: 40px; }
+
+        /* ГРИДЫ И КАРТОЧКИ */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        
+        .info-card {
+            background: var(--glass); padding: 40px; border-radius: 30px; border: 1px solid var(--border);
+            transition: var(--transition); position: relative; overflow: hidden;
+        }
+        .info-card:hover { border-color: var(--primary); transform: translateY(-10px); background: rgba(255,255,255,0.05); }
+        .info-card h3 { font-family: 'Syncopate'; font-size: 1.2rem; margin-bottom: 15px; color: var(--primary); }
+
+        /* ТЕХНОЛОГИИ */
+        .tech-tag {
+            display: inline-block; padding: 5px 15px; border-radius: 50px;
+            background: rgba(0, 242, 255, 0.1); border: 1px solid var(--primary);
+            font-size: 10px; margin: 5px; font-weight: 700;
+        }
+
+        /* КОНТАКТЫ */
+        .contact-input {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            padding: 20px; border-radius: 15px; color: white; margin-bottom: 20px; outline: none;
+        }
+        .contact-input:focus { border-color: var(--primary); }
+        .submit-btn {
+            width: 100%; padding: 20px; background: var(--primary); color: black;
+            font-weight: 900; border: none; border-radius: 15px; cursor: pointer; transition: 0.3s;
+        }
+        .submit-btn:hover { box-shadow: 0 0 30px var(--primary); transform: scale(1.02); }
+
+        footer { text-align: center; padding: 50px; opacity: 0.3; font-size: 10px; letter-spacing: 4px; }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 20px; }
+            .hero h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body onload="initSite()">
+
+    <div id="bg-layer"></div>
+    <div class="overlay"></div>
+
+    <header>
+        <div class="logo">NEURAL_CORE</div>
+        <nav>
+            <button class="nav-btn active" onclick="showTab('home', this)">Главная</button>
+            <button class="nav-btn" onclick="showTab('about', this)">Досье</button>
+            <button class="nav-btn" onclick="showTab('skills', this)">Технологии</button>
+            <button class="nav-btn" onclick="showTab('projects', this)">Проекты</button>
+            <button class="nav-btn" onclick="showTab('contact', this)">Контакт</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- СЕКЦИЯ: ГЛАВНАЯ -->
+        <section id="home" class="section active hero">
+            <h1 id="hero-title">SEITKALI<br><span style="color: var(--primary);">ADIL</span></h1>
+            <p>Добро пожаловать в мой цифровой узел. Здесь код встречается с искусством, а функциональность — с безупречным дизайном. Я создаю системы, которые меняют правила игры.</p>
+            <div style="display: flex; gap: 20px;">
+                <div class="info-card" style="padding: 20px;">
+                    <h4 style="color: var(--primary);">STATUS</h4>
+                    <p style="font-size: 0.8rem;">Online & Ready</p>
+                </div>
+                <div class="info-card" style="padding: 20px;">
+                    <h4 style="color: var(--magenta);">LOCATION</h4>
+                    <p style="font-size: 0.8rem;">Digital Space</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- СЕКЦИЯ: ДОСЬЕ -->
+        <section id="about" class="section">
+            <h2 style="font-family: 'Syncopate'; margin-bottom: 40px;">КТО Я ТАКОЙ?</h2>
+            <div class="grid">
+                <div class="info-card">
+                    <h3>Опыт</h3>
+                    <p>Более 6 лет в коммерческой разработке. Прошел путь от junior-верстальщика до системного архитектора сложных веб-приложений.</p>
+                </div>
+                <div class="info-card">
+                    <h3>Миссия</h3>
+                    <p>Моя цель — сделать интернет красивее и быстрее. Каждый проект для меня — это вызов текущим стандартам индустрии.</p>
+                </div>
+                <div class="info-card">
+                    <h3>Образование</h3>
+                    <p>Самоучка в душе, инженер по призванию. Постоянно прохожу курсы от топ-университетов мира (MIT, Stanford CS).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- СЕКЦИЯ: ТЕХНОЛОГИИ -->
+        <section id="skills" class="section">
+            <h2 style="font-family: 'Syncopate'; margin-bottom: 40px;">СТЕК ТЕХНОЛОГИЙ</h2>
+            <div class="grid">
+                <div class="info-card">
+                    <h3>Frontend</h3>
+                    <div class="tech-tag">React</div><div class="tech-tag">Next.js</div><div class="tech-tag">TypeScript</div>
+                    <div class="tech-tag">Tailwind</div><div class="tech-tag">GSAP</div><div class="tech-tag">Three.js</div>
+                </div>
+                <div class="info-card">
+                    <h3>Backend</h3>
+                    <div class="tech-tag">Node.js</div><div class="tech-tag">Python</div><div class="tech-tag">PostgreSQL</div>
+                    <div class="tech-tag">Redis</div><div class="tech-tag">Docker</div><div class="tech-tag">GraphQL</div>
+                </div>
+                <div class="info-card">
+                    <h3>Инструменты</h3>
+                    <div class="tech-tag">Git</div><div class="tech-tag">Figma</div><div class="tech-tag">Linux</div>
+                    <div class="tech-tag">Vercel</div><div class="tech-tag">Firebase</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- СЕКЦИЯ: ПРОЕКТЫ -->
+        <section id="projects" class="section">
+            <h2 style="font-family: 'Syncopate'; margin-bottom: 40px;">ИЗБРАННЫЕ РАБОТЫ</h2>
+            <div class="grid">
+                <div class="info-card">
+                    <div style="width:100%; height:150px; background:url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=400'); background-size:cover; border-radius:15px; margin-bottom:20px;"></div>
+                    <h3>Cyber Platform</h3>
+                    <p>Интерфейс для управления умными городами на базе AI.</p>
+                </div>
+                <div class="info-card">
+                    <div style="width:100%; height:150px; background:url('https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400'); background-size:cover; border-radius:15px; margin-bottom:20px;"></div>
+                    <h3>Crypto Nest</h3>
+                    <p>Безопасный децентрализованный кошелек для NFT и токенов.</p>
+                </div>
+                <div class="info-card">
+                    <div style="width:100%; height:150px; background:url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400'); background-size:cover; border-radius:15px; margin-bottom:20px;"></div>
+                    <h3>Motion Engine</h3>
+                    <p>Библиотека для создания сложной 3D анимации в браузере.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- СЕКЦИЯ: КОНТАКТ -->
+        <section id="contact" class="section">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px;">
+                <div>
+                    <h2 style="font-family: 'Syncopate'; font-size: 3rem;">СВЯЗЬ</h2>
+                    <p style="margin-top: 20px;">Готовы запустить проект своей мечты? Отправьте мне сигнал, и мы начнем трансформацию.</p>
+                    <div style="margin-top: 40px;">
+                        <p><b>TG:</b> @neural_entity</p>
+                        <p><b>Mail:</b> core@neural.dev</p>
+                    </div>
+                </div>
+                <div>
+                    <input type="text" class="contact-input" placeholder="Ваше кодовое имя">
+                    <input type="email" class="contact-input" placeholder="Ваш Email">
+                    <textarea class="contact-input" rows="5" placeholder="Описание задачи"></textarea>
+                    <button class="submit-btn" onclick="alert('Сигнал отправлен!')">ПЕРЕДАТЬ ДАННЫЕ</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 // SYSTEM_VER: 5.0.4 // NO RIGHTS RESERVED</p>
+    </footer>
+
+    <script>
+        // База динамических фонов
+        const bgs = {
+            home: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000",
+            about: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2000",
+            skills: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000",
+            projects: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2000",
+            contact: "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2000"
+        };
+
+        function initSite() {
+            document.getElementById('bg-layer').style.backgroundImage = `url(${bgs.home})`;
+        }
+
+        function showTab(tabId, el) {
+            // Анимация кнопок
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+
+            // Анимация переключения контента
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(s => {
+                s.style.opacity = '0';
+                setTimeout(() => s.classList.remove('active'), 300);
+            });
+
+            setTimeout(() => {
+                const activeSec = document.getElementById(tabId);
+                activeSec.classList.add('active');
+                setTimeout(() => activeSec.style.opacity = '1', 50);
+            }, 300);
+
+            // Смена фона
+            const bg = document.getElementById('bg-layer');
+            bg.style.backgroundImage = `url(${bgs[tabId]})`;
+            bg.style.transform = "scale(1)"; 
+            setTimeout(() => bg.style.transform = "scale(1.1)", 100);
+        }
+    </script>
+</body>
+</html>
